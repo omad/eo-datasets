@@ -42,7 +42,7 @@ setup(
     ],
     url="https://github.com/GeoscienceAustralia/eo-datasets",
     install_requires=[
-        "attrs",
+        "attrs>=18.1",  # 18.1 add syntactic sugar
         "boltons",
         "cattrs",
         "checksumdir",
@@ -50,7 +50,7 @@ setup(
         "click",
         "gdal",
         "h5py",
-        "jsonschema",
+        "jsonschema>=3",  # We want a Draft6Validator
         "netCDF4",
         "numpy",
         "pyproj",
