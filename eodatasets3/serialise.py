@@ -24,6 +24,7 @@ from eodatasets3.model import (
     ODC_DATASET_SCHEMA_URL,
     StacPropertyView,
 )
+from eodatasets3.utils import open_url_or_path
 from eodatasets3.properties import FileFormat
 
 
@@ -102,7 +103,7 @@ def dump_yaml(output_yaml: Path, *docs: Mapping) -> None:
         )
 
     yaml = _init_yaml()
-    with output_yaml.open("w") as stream:
+    with open_url_or_path(output_yaml, "w") as stream:
         yaml.dump_all(docs, stream)
 
 
@@ -111,8 +112,8 @@ def dumps_yaml(stream, *docs: Mapping) -> None:
     return _init_yaml().dump_all(docs, stream=stream)
 
 
-def load_yaml(p: Path) -> Dict:
-    with p.open() as f:
+def load_yaml(p: Union[Path, str]) -> Dict:
+    with open_url_or_path(p) as f:
         return YAML(typ="safe").load(f)
 
 
@@ -121,7 +122,7 @@ def loads_yaml(stream: Union[Text, IO]) -> Iterable[Dict]:
     return YAML(typ="safe").load_all(stream)
 
 
-def from_path(path: Path) -> DatasetDoc:
+def from_path(path: Union[Path, str]) -> DatasetDoc:
     if path.suffix.lower() not in (".yaml", ".yml"):
         raise ValueError(f"Unexpected file type {path.suffix}. Expected yaml")
 
@@ -136,7 +137,7 @@ class InvalidDataset(Exception):
 
 
 def _get_schema_validator(p: Path) -> jsonschema.Draft6Validator:
-    with p.open() as f:
+    with open_url_or_path(p) as f:
         schema = ruamel.yaml.safe_load(f)
     klass = jsonschema.validators.validator_for(schema)
     klass.check_schema(schema)
